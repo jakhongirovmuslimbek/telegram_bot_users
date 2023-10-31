@@ -28,15 +28,15 @@ db.create_table_users()
 @dp.message_handler(commands=['start'], state='*')
 async def echo(message: types.Message, state: FSMContext):    
     telegram_id = message.from_user.id
-    data = db.select_users(telegram_id)
-    if data is None:
-        username = message.from_user.username
-        await state.update_data(telegram_id=telegram_id)
-        await state.update_data(username=username)
-        await message.reply("Assalomu alekum! Ismingizni yozing....")
-        await UserData.name.set()
-    else:
-        await message.reply("Siz ro'yxatdan o'tgansiz!")
+    # data = db.select_users(telegram_id)
+    # if data is None:
+    username = message.from_user.username
+    await state.update_data(telegram_id=telegram_id)
+    await state.update_data(username=username)
+    await message.reply("Assalomu alekum! Ismingizni yozing....")
+    await UserData.name.set()
+    # else:
+    #     await message.reply("Siz ro'yxatdan o'tgansiz!")
 
 @dp.message_handler(state=UserData.name)
 async def echo(message: types.Message, state: FSMContext):
@@ -54,8 +54,7 @@ async def echo(message: types.Message, state: FSMContext):
 
 @dp.message_handler(content_types='location', state=UserData.location)
 async def echo(message: types.Message, state: FSMContext):
-    print(message.location)
-    location = f"{message.location['latitude']} {message.location['longitude']}"
+    location = f"{message.location['latitude']},{message.location['longitude']}"
     await state.update_data(location=location)
 
     data = await state.get_data()
@@ -65,13 +64,16 @@ async def echo(message: types.Message, state: FSMContext):
     name_ = data['name']
     phone_ = data['phone']
     location_ = data['location']
+    print(location_)
 
     db.insert_users(telegram_id_, username_, name_, phone_, location_)
     await message.answer("Siz ro'yxatdan muvaffaqiyatli o'tdingiz!")
-    await bot.send_message(admin, f"New user from @testuseer_bot\n\nName: {name_}\nUsername: @{username_}\nID: {telegram_id_}\nPhone number: +{phone_}")
+    await bot.send_message(admin, f"New user from @testuseer_bot\n\nName: {name_}\nUsername: @{username_}\nID: {telegram_id_}\nPhone number: +{phone_}\nLocation: https://www.google.com/maps/@{location_},6.5z?entry=ttu")
     await state.finish()
     await state.reset_state()
 
 # Run the bot
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
+
+    # https://www.google.com/maps/@40.8948528,65.4827705,6.5z?entry=ttu
