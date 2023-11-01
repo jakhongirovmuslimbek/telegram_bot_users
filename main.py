@@ -6,25 +6,18 @@ from database import Database
 from buttons import *
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-# for state
 from aiogram.dispatcher import FSMContext
 from state import UserData
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 storage = MemoryStorage()
-
-# Set up logging
 logging.basicConfig(level=logging.INFO)
 
-# Initialize the bot and dispatcher
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot, storage=storage)
 db = Database()
-
-# create baza
 db.create_table_users()
 
-# Define a command handler
 @dp.message_handler(commands=['start'], state='*')
 async def echo(message: types.Message, state: FSMContext):    
     telegram_id = message.from_user.id
@@ -73,6 +66,5 @@ async def echo(message: types.Message, state: FSMContext):
     await state.finish()
     await state.reset_state()
 
-# Run the bot
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
