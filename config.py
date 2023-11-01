@@ -1,1 +1,2 @@
-API_TOKEN = '6020066010:AAG7ZFqsCcHmQne53H8jmz4a1JhKmoQIWrw'
+API_TOKEN = 'write your token here'
+admin = 'write admin id'
